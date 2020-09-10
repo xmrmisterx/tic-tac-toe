@@ -1,6 +1,6 @@
 class Board # Board class is responsible for initializing the board with a grid and placing pieces on the board.
   
-  def initialize # We initialize by creating an of 3 elements, each element being an array itself of 3 "nil" elements.
+  def initialize # We initialize by creating an array of 3 elements, each element being an array itself of 3 "nil" elements.
       @board = Array.new(3){Array.new(3)}
 
   end
@@ -32,7 +32,7 @@ class Game # The game class is the main class, containing most of our functions.
     @board.render
   end
 
-  def play (current_player, player1, player2) # This is our main function of the game, the "play" function. It loops between each player, asking for coordinates, placing them, and checking for game winning combinations after each piece placement.
+  def play (current_player, player1, player2) # This is our main function of the game, the "play" function. It alternates between the two players, asking for coordinates, placing them, and checking for game winning combinations after each piece placement.
     coordinates_taken_counter = 0 # We have a coordinates_taken_counter, which keeps track of how many coordinates have been placed. Once this is at 9 or greater, that means the game is over and ended in a tie.
     coordinates_taken_array = [] # We need a coordinates_taken_array to keep track of which coordinates have been taken. Once a piece is placed, the coordinate for that piece goes into this array.
     coordinate_with_piece_hash = {
@@ -49,7 +49,7 @@ class Game # The game class is the main class, containing most of our functions.
     
     } # The coordinates_with_piece_hash is how we'll check for game winning combinations. It keeps track of each coordinate as the key, and the value is the piece that is on that coordinate, if a piece is placed, otherwise the value will be nil.
     
-    available_coordinates_array = [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]] # We also need an available coordinates array, which tracks which coordinates still don't have pieces on them. This is used by the computer to determine what are the available coordinates.
+    available_coordinates_array = [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]] # We also need an available coordinates array, which tracks which coordinates still don't have pieces on them. This is used by the computer to determine the available coordinates.
 
     loop do # We want a game loop that will keep asking players for coordinates, until there is a tie or a winner.
 
@@ -57,7 +57,7 @@ class Game # The game class is the main class, containing most of our functions.
 
         puts "#{current_player.name} please input the coordinates for your piece in coordinate form (x,y), where x and y have values from 0 to 2." # We ask the human player, player 1, for their coordinates of choice.
         answer1 = gets.chomp # The coordinate is saved as answer1...
-        filtered_coordinate = Game.filter(answer1) # then we run our class method "filter" to remove commas and other weird characters, to leave a "filtered_coordinate"
+        filtered_coordinate = Game.filter(answer1) # then we run our class method "filter" to remove commas and other irrelevant characters, to leave a "filtered_coordinate"
       
         if Game.coordinates_valid?(filtered_coordinate) # We run the "coordinates_valid?" method on our filtered_coordinate to see if the answer is a possible coordinate on the board.
 
@@ -83,12 +83,10 @@ class Game # The game class is the main class, containing most of our functions.
 
         coordinate_with_piece_hash[converted_coordinate] = current_player.piece # Here, we update our coordinate_with_piece hash, for the key at the "converted_coordinate" to have a value equal to the current player's piece.
 
-        coordinates_taken_array = Game.add_coordinate(converted_coordinate, coordinates_taken_array) # We call the class method "add_coordinate" to add our converted_coordinate into our coordinates_taken_array
-
-        # puts "current_player: #{current_player.name}, current piece: #{current_player.piece}, filtered_coordinate: #{filtered_coordinate}, converted coordinate: #{converted_coordinate}"
+        coordinates_taken_array = Game.add_coordinate(converted_coordinate, coordinates_taken_array) # We call the class method "add_coordinate" to add our converted_coordinate to our coordinates_taken_array
 
         @board.place_piece(converted_coordinate, current_player.piece) # We call the place piece function from our "@board" object to place a piece at the converted coordinate
-        @board.render # then render the board so we can see it visually.
+        @board.render # then render the board so we can see it.
 
         if Game.game_over?(coordinate_with_piece_hash) # After the piece is placed, we run the class method "game_over?" to check if their is a winner. If there is...
           puts "#{current_player.name} has 3 in a row and is the winner! Game over..." # We declare the winner and end the game,
@@ -107,10 +105,6 @@ class Game # The game class is the main class, containing most of our functions.
       else # If the converted coordinate is taken... We tell the player to try again.
         puts "Those are valid coordinates, but they are taken... Try again."
       end
-
-      # else 
-      #   puts "Those are not valid coordinates, try again..."
-      # end
     end
   end
 
@@ -129,7 +123,7 @@ class Game # The game class is the main class, containing most of our functions.
     return filtered_array # Explicitly return the filtered array, so we can call this method when we want the filtered array.
   end
 
-  def self.convert_coordinate(filtered_array) # This method takes the filtered array as a parameter, and converts the coordinate key into its associated coordinate value. We have to convert the coordinates bc the computer coordinate system, and our standard coordinate system, are not the same.
+  def self.convert_coordinate(filtered_array) # This method takes the filtered array as a parameter, and converts the coordinate key into its associated coordinate value. We have to convert the coordinates because the computer coordinate system, and our standard coordinate system, is not the same.
 
     coordinate_conversion_hash = { # These are the key value pairs for standard notation coordinates and our board's coordinates, respectively.
 
@@ -231,7 +225,7 @@ class Player # The player class creates players with name and piece properties.
 
 end
 
-game = Game.new # Outside of our classes, we create a "game" object to call "play method".
+game = Game.new # Outside of our classes, we create a "game" object to call the "play" method.
 
 puts "Player1, what is your name?" # We also ask for the human player's name...
 player1_name = gets.chomp # save the answer in a "player1_name" variable...
@@ -241,7 +235,7 @@ player2 = Player.new("computer", "o")
 current_player = player1 # By default, the current player is player1.
 puts "Player one's name is #{player1.name} and they control the #{player1.piece} piece. Player two is the #{player2.name} and they control the #{player2.piece} piece" # We declare the players, and their pieces...
 
-game.play(current_player, player1, player2) # Then start the play loop, to start the game.
+game.play(current_player, player1, player2) # Then run the play function to start the game.
 
 
 
