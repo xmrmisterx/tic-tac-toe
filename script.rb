@@ -71,7 +71,7 @@ class Game # The game class is the main class, containing most of our functions.
       if current_player == player2 # If the current player is player 2, or the computer...
 
         puts "The computer is thinking about which coordinate to pick..." # we puts out a message saying the computer is thinking...
-        sleep(5) # then pause the code for 2 to 4 seconds to make it seem like the computer is thinking, lol.
+        sleep(5) # then pause the code for 5 seconds to make it seem like the computer is thinking, lol.
 
         converted_coordinate = Game.computer_pick(available_coordinates_array) # We run the class method computer pick, which relies on the available coordinates array parameter, to get the computer's "converted_coordinate"
 
