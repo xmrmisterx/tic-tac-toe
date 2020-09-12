@@ -27,12 +27,23 @@ end
 
 class Game # The game class is the main class, containing most of our functions.
 
-  def initialize # When we start the game, we want to create a new board, then render it so the player sees it.
+  def initialize # When we start the game, we want to create a new board, then render it so the player sees it. We'll also ask the human player for their name, then create the players, assign the current player, and announce the player names and their pieces.
+    
     @board = Board.new
     @board.render
+
+    puts "Player1, what is your name?" 
+    player1_name = gets.chomp 
+
+    @player1 = Player.new(player1_name, "x") 
+    @player2 = Player.new("computer", "o")
+    @current_player = @player1
+    puts "Player one's name is #{@player1.name} and they control the #{@player1.piece} piece. Player two is the #{@player2.name} and they control the #{@player2.piece} piece"
+  
   end
 
-  def play (current_player, player1, player2) # This is our main function of the game, the "play" function. It alternates between the two players, asking for coordinates, placing them, and checking for game winning combinations after each piece placement.
+  def play # This is our main function of the game, the "play" function. It alternates between the two players, asking for coordinates, placing them, and checking for game winning combinations after each piece placement.
+
     coordinates_taken_counter = 0 # We have a coordinates_taken_counter, which keeps track of how many coordinates have been placed. Once this is at 9 or greater, that means the game is over and ended in a tie.
     coordinates_taken_array = [] # We need a coordinates_taken_array to keep track of which coordinates have been taken. Once a piece is placed, the coordinate for that piece goes into this array.
     coordinate_with_piece_hash = {
@@ -53,9 +64,9 @@ class Game # The game class is the main class, containing most of our functions.
 
     loop do # We want a game loop that will keep asking players for coordinates, until there is a tie or a winner.
 
-      if current_player == player1 # We have an if statement to check which player it is, since player 2 is controlled by the computer
+      if @current_player == @player1 # We have an if statement to check which player it is, since player 2 is controlled by the computer
 
-        puts "#{current_player.name} please input the coordinates for your piece in coordinate form (x,y), where x and y have values from 0 to 2." # We ask the human player, player 1, for their coordinates of choice.
+        puts "#{@current_player.name} please input the coordinates for your piece in coordinate form (x,y), where x and y have values from 0 to 2." # We ask the human player, player 1, for their coordinates of choice.
         answer1 = gets.chomp # The coordinate is saved as answer1...
         filtered_coordinate = Game.filter(answer1) # then we run our class method "filter" to remove commas and other irrelevant characters, to leave a "filtered_coordinate"
       
@@ -68,7 +79,7 @@ class Game # The game class is the main class, containing most of our functions.
         end
       end
       
-      if current_player == player2 # If the current player is player 2, or the computer...
+      if @current_player == @player2 # If the current player is player 2, or the computer...
 
         puts "The computer is thinking about which coordinate to pick..." # we puts out a message saying the computer is thinking...
         sleep(5) # then pause the code for 5 seconds to make it seem like the computer is thinking, lol.
@@ -81,19 +92,19 @@ class Game # The game class is the main class, containing most of our functions.
 
         available_coordinates_array = available_coordinates_array - converted_coordinate # We update our available coordinates array equal to itself minus the coordinate we will be placing a piece on.
 
-        coordinate_with_piece_hash[converted_coordinate] = current_player.piece # Here, we update our coordinate_with_piece hash, for the key at the "converted_coordinate" to have a value equal to the current player's piece.
+        coordinate_with_piece_hash[converted_coordinate] = @current_player.piece # Here, we update our coordinate_with_piece hash, for the key at the "converted_coordinate" to have a value equal to the current player's piece.
 
         coordinates_taken_array = Game.add_coordinate(converted_coordinate, coordinates_taken_array) # We call the class method "add_coordinate" to add our converted_coordinate to our coordinates_taken_array
 
-        @board.place_piece(converted_coordinate, current_player.piece) # We call the place piece function from our "@board" object to place a piece at the converted coordinate
+        @board.place_piece(converted_coordinate, @current_player.piece) # We call the place piece function from our "@board" object to place a piece at the converted coordinate
         @board.render # then render the board so we can see it.
 
         if Game.game_over?(coordinate_with_piece_hash) # After the piece is placed, we run the class method "game_over?" to check if their is a winner. If there is...
-          puts "#{current_player.name} has 3 in a row and is the winner! Game over..." # We declare the winner and end the game,
+          puts "#{@current_player.name} has 3 in a row and is the winner! Game over..." # We declare the winner and end the game...
           break # and break our play loop.
         end
 
-        current_player = Player.switch_players(player1, player2, current_player) # If there isn't a winner yet, we call the Player class method "switch_players" to switch the current player.
+        switch_players  # If there isn't a winner yet, we call the Player class method "switch_players" to switch the current player.
 
         coordinates_taken_counter += 1 # We tick up the coordinates taken counter to keep track of how many pieces are on the board.
       
@@ -106,6 +117,15 @@ class Game # The game class is the main class, containing most of our functions.
         puts "Those are valid coordinates, but they are taken... Try again."
       end
     end
+  end
+
+  def switch_players # We need a function to switch players after every piece. We check to see if the current player is player1, and if it is, set current player to player1, otherwise if the current player is not player1, we set current player to player 1.
+    if @current_player == @player1
+      @current_player = @player2
+    else
+      @current_player = @player1
+    end
+  
   end
 
 
@@ -138,7 +158,7 @@ class Game # The game class is the main class, containing most of our functions.
       [2,2] => [0,2],
     }
 
-    coordinate_conversion_hash.each do |key, value| # We loop through our hash and find the key that matches the filtered array, and return the value associated with that key.
+    coordinate_conversion_hash.each do |key, value|  # We loop through our hash and find the key that matches the filtered array, and return the value associated with that key.
       if key == filtered_array
         return value
       end
@@ -168,17 +188,17 @@ class Game # The game class is the main class, containing most of our functions.
   def self.add_coordinate (converted_coordinate, coordinates_taken_array) # "Add_coordinate" adds our to be placed coordinate into the coordinates_taken_array.
     if coordinates_taken?(converted_coordinate, coordinates_taken_array) == false # If our converted coordinate is not taken...
   
-      coordinates_taken_array.push(converted_coordinate) # add our converted coordinate into our coordinates taken array.
+      coordinates_taken_array.push(converted_coordinate)   # add our converted coordinate into our coordinates taken array.
   
     end
     return coordinates_taken_array # We want to return the coordinates_taken_array to call it using this function.
   end
 
-  def self.check_for_winner (coord1, coord2, coord3, coordinate_with_piece_hash) # This function checks coordinates 1, 2, and 3, for a winning combination of 3 in a row, using the coordinate_with_piece_hash to check each coordinates corresponding piece.
+  def self.check_for_winner (coord1, coord2, coord3, coordinate_with_piece_hash)   # This function checks coordinates 1, 2, and 3, for a winning combination of 3 in a row, using the coordinate_with_piece_hash to check each coordinates corresponding piece.
   
     if (coordinate_with_piece_hash[coord1] == coordinate_with_piece_hash[coord2]) && (coordinate_with_piece_hash[coord1] == coordinate_with_piece_hash[coord3]) # If coord1's piece, matches coord2's piece, and also coord3's piece, then they are all the same.
   
-      if (coordinate_with_piece_hash[coord1] != nil) # We have to make sure that the 3 matches are not "nil" matches, since this check runs after each board piece placed, and in the beginning, there will be alot of 3 in a row nil matches.
+      if (coordinate_with_piece_hash[coord1] != nil)  # We have to make sure that the 3 matches are not "nil" matches, since this check runs after each board piece placed, and in the beginning, there will be alot of 3 in a row nil matches.
         return true # If there is a 3 in a row match, return true.
       end
     end
@@ -189,7 +209,7 @@ class Game # The game class is the main class, containing most of our functions.
     if (Game.check_for_winner([0,0], [0,1], [0,2], coordinate_with_piece_hash) == true || Game.check_for_winner([1,0], [1,1], [1,2], coordinate_with_piece_hash) == true || Game.check_for_winner([2,0], [2,1], [2,2], coordinate_with_piece_hash) == true || Game.check_for_winner([0,0], [1,0], [2,0], coordinate_with_piece_hash) == true || Game.check_for_winner([0,1], [1,1], [2,1], coordinate_with_piece_hash) == true || Game.check_for_winner([0,2], [1,2], [2,2], coordinate_with_piece_hash) == true || Game.check_for_winner([2,2],[1,1],[0,0], coordinate_with_piece_hash) == true || Game.check_for_winner([2,0], [1,1], [0,2], coordinate_with_piece_hash) == true) 
       return true # If any of those 3 in a row combos exist, then return true that the game is over.
     else
-      return false # Otherwise return false.
+      return false  Otherwise return false.
     end
 
   end
@@ -212,30 +232,10 @@ class Player # The player class creates players with name and piece properties.
     @piece = piece
   end
 
-  def self.switch_players (player1, player2, current_player) # We need a function to switch players, which takes parameters of player1, player2, and the current_player.
-    if current_player == player1
-      current_player = player2
-    else
-      current_player = player1
-    end
-
-    return current_player
-  
-  end
-
 end
 
 game = Game.new # Outside of our classes, we create a "game" object to call the "play" method.
-
-puts "Player1, what is your name?" # We also ask for the human player's name...
-player1_name = gets.chomp # save the answer in a "player1_name" variable...
-
-player1 = Player.new(player1_name, "x") # so we can create our player1, player2, and current_player Person class objects.
-player2 = Player.new("computer", "o")
-current_player = player1 # By default, the current player is player1.
-puts "Player one's name is #{player1.name} and they control the #{player1.piece} piece. Player two is the #{player2.name} and they control the #{player2.piece} piece" # We declare the players, and their pieces...
-
-game.play(current_player, player1, player2) # Then run the play function to start the game.
+game.play # Then run the play function to start the game.
 
 
 
@@ -256,6 +256,91 @@ game.play(current_player, player1, player2) # Then run the play function to star
 
 
 
+
+
+
+
+
+class Game 
+
+  def initialize 
+    
+    @board = Board.new
+    @board.render
+
+    puts "Player1, what is your name?" 
+    player1_name = gets.chomp 
+
+    @player1 = Player.new(player1_name, "x") 
+    @player2 = Player.new("computer", "o")
+    @current_player = @player1
+    puts "Player one's name is #{@player1.name} and they control the #{@player1.piece} piece. Player two is the #{@player2.name} and they control the #{@player2.piece} piece"
+
+    play
+    @board.render
+    switch_players
+    play
+    @board.render
+  
+  end
+
+  def switch_players 
+    if @current_player == @player1
+      puts "@current player: #{@current_player.name}, @player1: #{@player1.name}"
+      @current_player = @player2
+      puts "switched current player: #{@current_player.name}, @player2: #{@player2.name}"
+    else
+      puts "@current player: #{@current_player.name}. @player2: #{@player2.name}"
+      @current_player = @player1
+      puts "switched current player: #{@current_player.name}, @player1: #{@player1.name}"
+    end
+  
+  end
+
+  def play
+    @board.place_piece([1,1], @current_player.piece)
+  end
+
+
+end
+
+class Player
+  attr_accessor :name , :piece
+  def initialize (name, piece)
+    @name = name
+    @piece = piece
+  end
+end
+
+class Board 
+  
+  def initialize 
+      @board = Array.new(3){Array.new(3)}
+
+  end
+
+  def render 
+    puts
+
+    @board.each do |row|
+        row.each do |cell|
+
+            cell.nil? ? print("-") : print(cell.to_s)
+        end
+        puts
+    end
+    puts
+  end
+
+  def place_piece (arr2, piece) 
+
+    @board[arr2[0]][arr2[1]]= piece
+
+  end
+end
+
+
+game = Game.new
 
 
 
