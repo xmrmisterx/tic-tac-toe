@@ -1,6 +1,18 @@
 # tic-tac-toe
 
-This is a record of our thoughts as we were doing this Odin Project assigment. This one seemed like a big step above the others, as we are using classes now, and at certain points got pretty frustrating.
+This tic tac toe clone is a terminal game done in Ruby. There were some interesting interactions between the 3 classes and their objects, which resulted in us learning a lot about objects, their properties, and how to access data across classes.
+
+Below is a record of our thoughts as we were doing this Odin Project assigment. This one seemed like a big step above the others, as we are using classes now, and at certain points got pretty frustrating.
+
+
+
+
+
+
+
+
+
+
 
 We want to create a tic tac toe game that can be played in terminal... The assignment says to think carefully about what should be a class, instance variable, and method. It also notes to take into consideration what should and shouldn't be shared between classes.
 

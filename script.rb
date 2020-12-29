@@ -209,7 +209,7 @@ class Game # The game class is the main class, containing most of our functions.
     if (Game.check_for_winner([0,0], [0,1], [0,2], coordinate_with_piece_hash) == true || Game.check_for_winner([1,0], [1,1], [1,2], coordinate_with_piece_hash) == true || Game.check_for_winner([2,0], [2,1], [2,2], coordinate_with_piece_hash) == true || Game.check_for_winner([0,0], [1,0], [2,0], coordinate_with_piece_hash) == true || Game.check_for_winner([0,1], [1,1], [2,1], coordinate_with_piece_hash) == true || Game.check_for_winner([0,2], [1,2], [2,2], coordinate_with_piece_hash) == true || Game.check_for_winner([2,2],[1,1],[0,0], coordinate_with_piece_hash) == true || Game.check_for_winner([2,0], [1,1], [0,2], coordinate_with_piece_hash) == true) 
       return true # If any of those 3 in a row combos exist, then return true that the game is over.
     else
-      return false  Otherwise return false.
+      return false # Otherwise return false.
     end
 
   end
