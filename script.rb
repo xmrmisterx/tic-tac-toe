@@ -76,6 +76,7 @@ class Game # The game class is the main class, containing most of our functions.
         
         else # If the coordinates are not valid, we say so.
           puts "Those are not valid coordinates, try again..."
+          redo
         end
       end
       
