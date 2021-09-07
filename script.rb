@@ -91,7 +91,7 @@ class Game # The game class is the main class, containing most of our functions.
 
       if Game.coordinates_taken?(converted_coordinate, coordinates_taken_array) == false # We run the class method "coordinates_taken?" to see if the coordinate, although valid, is already taken on the board...
 
-        available_coordinates_array = available_coordinates_array - converted_coordinate # We update our available coordinates array equal to itself minus the coordinate we will be placing a piece on.
+        available_coordinates_array.delete(converted_coordinate) # We delete the coordinate we will be placing a piece on from the available coordinates array
 
         coordinate_with_piece_hash[converted_coordinate] = @current_player.piece # Here, we update our coordinate_with_piece hash, for the key at the "converted_coordinate" to have a value equal to the current player's piece.
 
